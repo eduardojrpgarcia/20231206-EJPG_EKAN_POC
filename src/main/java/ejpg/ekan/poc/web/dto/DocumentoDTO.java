@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 public class DocumentoDTO {
 
 	@JsonProperty(value = "documento_id")
-	private String documentoId;
+	private String id;
 
 	@JsonProperty(value = "tipo_documento")
 	private String tipoDocumento;

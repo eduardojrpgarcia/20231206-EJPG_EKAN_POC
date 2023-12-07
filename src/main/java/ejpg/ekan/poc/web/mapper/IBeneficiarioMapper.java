@@ -1,23 +1,24 @@
 package ejpg.ekan.poc.web.mapper;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import ejpg.ekan.poc.data.dao.BeneficiarioDAO;
 import ejpg.ekan.poc.data.domain.Beneficiario;
 import ejpg.ekan.poc.web.dto.DocumentoDTO;
+import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import ejpg.ekan.poc.data.domain.Documento;
 import ejpg.ekan.poc.web.dto.BeneficiarioDTO;
+import org.mapstruct.MappingConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public abstract class IBeneficiarioMapper {
-
-    @Autowired
-    BeneficiarioDAO beneficiarioDAO;
 
     @Mapping(target = "id", source = "beneficiario.id")
     @Mapping(target = "nome", source = "beneficiario.nome")
@@ -28,23 +29,11 @@ public abstract class IBeneficiarioMapper {
 //    @Mapping(target = "documentos", expression = "java(mapDocumentoDTOFromDocumento(beneficiario.getId()))")
 	public abstract List<BeneficiarioDTO> mapBeneficiarioToBeneficiarioDTO(List<Beneficiario> beneficiario);
 
-//	public abstract Beneficiario mapBeneficiarioFromBeneficiarioDTO(BeneficiarioDTO dto);
-
-//	public abstract List<Documento> mapDocumentoFromBeneficiarioDTO(BeneficiarioDTO dto);
-
-    public List<DocumentoDTO> mapDocumentoDTOFromDocumento(String beneficiarioId) {
-        List<Documento> documentos = beneficiarioDAO.listarTodosDocumentosDeBeneficiario(beneficiarioId);
-        List<DocumentoDTO> documentosDTO = new ArrayList<>();
-        for (Documento d : documentos) {
-            DocumentoDTO dto = new DocumentoDTO();
-            dto.setDocumentoId(d.getId());
-            dto.setTipoDocumento(d.getTipoDocumento());
-            dto.setDescricao(d.getDescricao());
-            dto.setDataInclusao(d.getDataInclusao());
-            dto.setDataAtualizacao(d.getDataAtualizacao());
-            documentosDTO.add(dto);
-        }
-        return documentosDTO;
-    }
+    @Mapping(target = "id", source = "doc.id")
+    @Mapping(target = "tipoDocumento", source = "doc.tipoDocumento")
+    @Mapping(target = "descricao", source = "doc.descricao")
+    @Mapping(target = "dataInclusao", source = "doc.dataInclusao")
+    @Mapping(target = "dataAtualizacao", source = "doc.dataAtualizacao")
+    public abstract List<DocumentoDTO> mapDocumentoDTOFromDocumento(List<Documento> doc);
 
 }
