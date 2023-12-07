@@ -33,7 +33,7 @@ public class Beneficiario extends PersistentObject {
     private LocalDateTime dataInclusao;
 
 	@Column(name = "DATA_ATUALIZACAO", nullable = false)
-	private String dataAtualizacao;
+	private LocalDateTime dataAtualizacao;
 
 	public static boolean isEmpty(Beneficiario beneficiario) {
 		if (ObjectUtils.isEmpty(beneficiario)) {
