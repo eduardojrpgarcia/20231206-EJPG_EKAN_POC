@@ -15,7 +15,7 @@ import java.util.List;
 public class BeneficiarioDTO {
 	
 	@JsonProperty(value = "beneficiario_id")
-	private String beneficiarioId;
+    private String id;
 
     private String nome;
 
