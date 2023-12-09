@@ -35,5 +35,19 @@ public abstract class IBeneficiarioMapper {
     @Mapping(target = "dataInclusao", source = "doc.dataInclusao")
     @Mapping(target = "dataAtualizacao", source = "doc.dataAtualizacao")
     public abstract List<DocumentoDTO> mapDocumentoDTOFromDocumento(List<Documento> doc);
+    @Mapping(target = "id", source = "dto.id")
+    @Mapping(target = "nome", source = "dto.nome")
+    @Mapping(target = "telefone", source = "dto.telefone")
+    @Mapping(target = "dataNascimento", source = "dto.dataNascimento")
+    @Mapping(target = "dataInclusao", source = "dto.dataInclusao")
+    @Mapping(target = "dataAtualizacao", source = "dto.dataAtualizacao")
+    public abstract Beneficiario mapBeneficiarioDTOToBeneficiario(BeneficiarioDTO dto);
+
+    @Mapping(target = "id", source = "dto.id")
+    @Mapping(target = "tipoDocumento", source = "dto.tipoDocumento")
+    @Mapping(target = "descricao", source = "dto.descricao")
+    @Mapping(target = "dataInclusao", source = "dto.dataInclusao")
+    @Mapping(target = "dataAtualizacao", source = "dto.dataAtualizacao")
+    public abstract List<Documento> mapDocumentoDTOToDocumento(List<DocumentoDTO> dto);
 
 }
