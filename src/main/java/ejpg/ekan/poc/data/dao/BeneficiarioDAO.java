@@ -25,10 +25,19 @@ public class BeneficiarioDAO {
 		this.documentoRepository = documentoRepository;
 	}
 
-	public void criarBeneficiario(Beneficiario beneficiario, List<Documento> documentos) {
-		this.beneficiarioRepository.save(beneficiario);
-		for (Documento d : documentos) {
-			this.documentoRepository.save(d);
+	public void salvarBeneficiario(Beneficiario beneficiario, List<Documento> documentos) {
+		Beneficiario b;
+		try {
+			b = this.beneficiarioRepository.save(beneficiario);
+		} catch (RuntimeException e) {
+			throw new RuntimeException(e);
+		} try {
+			for (Documento d : documentos) {
+				d.setBeneficiario(b);
+				this.documentoRepository.save(d);
+			}
+		} catch (RuntimeException e) {
+			throw new RuntimeException(e);
 		}
 	}
 
