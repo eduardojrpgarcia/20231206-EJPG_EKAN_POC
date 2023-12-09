@@ -46,6 +46,7 @@ public class BeneficiarioController {
 
 	@PutMapping
 	public ResponseEntity<HttpStatus> atualizarDadosBeneficiario(@RequestBody BeneficiarioDTO beneficiario) {
+		dao.atualizarDadosDeBeneficiario(mapper.mapBeneficiarioDTOToBeneficiario(beneficiario));
 		return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
 	}
 

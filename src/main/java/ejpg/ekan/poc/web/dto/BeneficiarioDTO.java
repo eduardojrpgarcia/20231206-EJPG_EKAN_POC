@@ -15,7 +15,7 @@ import java.util.List;
 @EqualsAndHashCode
 public class BeneficiarioDTO {
 	
-	@JsonProperty(value = "beneficiario_id", access = Access.WRITE_ONLY)
+	@JsonProperty(value = "beneficiario_id")
     private String id;
 
     private String nome;
