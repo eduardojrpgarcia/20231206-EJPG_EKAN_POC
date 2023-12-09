@@ -7,6 +7,7 @@ import ejpg.ekan.poc.web.mapper.IBeneficiarioMapper;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,8 +28,10 @@ public class BeneficiarioController {
 		this.dao = dao;
 	}
 
-	@PostMapping
+	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<HttpStatus> criarBeneficiario(@RequestBody BeneficiarioDTO beneficiario) {
+		dao.salvarBeneficiario(mapper.mapBeneficiarioDTOToBeneficiario(beneficiario),
+				mapper.mapDocumentoDTOToDocumento(beneficiario.getDocumentos()));
         return new ResponseEntity<>(null, HttpStatus.METHOD_NOT_ALLOWED);
 	}
 
