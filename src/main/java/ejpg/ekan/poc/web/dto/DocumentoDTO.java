@@ -2,6 +2,8 @@ package ejpg.ekan.poc.web.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -11,20 +13,19 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode
 public class DocumentoDTO {
 
-	@JsonProperty(value = "documento_id")
+	@JsonProperty(value = "documento_id", access = Access.WRITE_ONLY)
 	private String id;
 
-	@JsonProperty(value = "tipo_documento")
 	private String tipoDocumento;
 
 	private String descricao;
 
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss")
 	@JsonProperty(value = "data_inclusao")
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/YYYY HH:MM:SS")
 	private LocalDateTime dataInclusao;
 
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss")
 	@JsonProperty(value = "data_atualizacao")
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/YYYY HH:MM:SS")
 	private LocalDateTime dataAtualizacao;
 	
 }
