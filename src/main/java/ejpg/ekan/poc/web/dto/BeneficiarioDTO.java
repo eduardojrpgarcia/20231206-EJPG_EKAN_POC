@@ -2,7 +2,6 @@ package ejpg.ekan.poc.web.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

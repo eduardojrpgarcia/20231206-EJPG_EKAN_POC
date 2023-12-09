@@ -35,6 +35,9 @@ public class Beneficiario extends PersistentObject {
 	@Column(name = "DATA_ATUALIZACAO", nullable = false)
 	private LocalDateTime dataAtualizacao;
 
+	@Column(name = "HIDDEN", nullable = true)
+	private Boolean hidden;
+	
 	public static boolean isEmpty(Beneficiario beneficiario) {
 		if (ObjectUtils.isEmpty(beneficiario)) {
 			return true;

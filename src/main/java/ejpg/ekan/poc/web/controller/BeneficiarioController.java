@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -46,12 +47,16 @@ public class BeneficiarioController {
 
 	@PutMapping
 	public ResponseEntity<HttpStatus> atualizarDadosBeneficiario(@RequestBody BeneficiarioDTO beneficiario) {
+		if (beneficiario.getId() == null) {
+			throw new RuntimeException("Beneficiario Id não informado");
+		} 
 		dao.atualizarDadosDeBeneficiario(mapper.mapBeneficiarioDTOToBeneficiario(beneficiario));
 		return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
 	}
 
 	@DeleteMapping
-	public ResponseEntity<HttpStatus> removerBeneficiario(@RequestBody String beneficiarioId) {
+	public ResponseEntity<HttpStatus> removerBeneficiario(@RequestBody BeneficiarioDTO beneficiario) {
+		dao.removerBeneficiario(beneficiario.getId());
 		return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 	}
 
