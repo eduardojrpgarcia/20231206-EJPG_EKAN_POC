@@ -16,7 +16,6 @@ FEATURES:
 - ATUALIZAR OS DADOS CADASTRAIS DE UM BENEFICIARIO [ OK ]
 - REMOVER UM BENEFICIARIO [ OK ]
 
-> ENVIAR LINK DO REPOSITORIO PARA pdantas@ekan.com.br;
 ---------------------------------------------------------------------------------------------------
 DISCRIMINANTE DE APLICAÇÃO
 

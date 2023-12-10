@@ -12,7 +12,8 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @ComponentScan(basePackages = { "ejpg.ekan.poc.data.config", 
-		"ejpg.ekan.poc.web.config" })
+		"ejpg.ekan.poc.web.config",
+		"ejpg.ekan.poc.web.security.config"})
 public class Application {
 
 	public static void main(String[] args) {
