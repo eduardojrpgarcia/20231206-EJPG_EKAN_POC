@@ -28,9 +28,9 @@ TO DO
 
 CARD 1
 - adicionar listagem de documentos em lista beneficiarios [ OK ]
-- ocultar documentos de beneficiarios removidos em lista de documentos [ EM ANDAMENTO ]
+- ocultar documentos de beneficiarios removidos em lista de documentos [ OK ]
 
 
 CARD 2
-- adicionar autenficacao e autorizacao na api
+- adicionar autenficacao e autorizacao na api [ em andamento ]
 ---------------------------------------------------------------------------------------------------

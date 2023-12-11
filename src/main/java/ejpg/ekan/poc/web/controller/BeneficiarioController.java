@@ -4,13 +4,14 @@ import ejpg.ekan.poc.data.dao.BeneficiarioDAO;
 import ejpg.ekan.poc.web.dto.BeneficiarioDTO;
 import ejpg.ekan.poc.web.dto.DocumentoDTO;
 import ejpg.ekan.poc.web.mapper.IBeneficiarioMapper;
+
+import org.apache.commons.lang3.ObjectUtils;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -38,7 +39,7 @@ public class BeneficiarioController {
 		List<BeneficiarioDTO> beneficiarios = mapper.mapBeneficiarioToBeneficiarioDTO(dao.listarTodosBeneficiarios());
 		for (BeneficiarioDTO dto : beneficiarios) {
 			List<DocumentoDTO> documentos = 
-					mapper.mapDocumentoDTOFromDocumento(dao.listarTodosDocumentosDeBeneficiario(dto.getId()));
+					mapper.mapDocumentoDTOFromDocumento(dao.listarTodosDocumentosDeBeneficiario(dto.getId(), "USER"));
 			dto.setDocumentos(documentos);
 		}
 		return new ResponseEntity<>(beneficiarios, HttpStatus.OK);
@@ -46,7 +47,10 @@ public class BeneficiarioController {
 
 	@GetMapping("/documentos")
 	public ResponseEntity<List<DocumentoDTO>> buscarTodosDocumentosDeBeneficiario(@RequestParam(name = "beneficiarioId") String benefiarioId) {
-		List<DocumentoDTO> documentos = mapper.mapDocumentoDTOFromDocumento(dao.listarTodosDocumentosDeBeneficiario(benefiarioId));
+		List<DocumentoDTO> documentos = mapper.mapDocumentoDTOFromDocumento(dao.listarTodosDocumentosDeBeneficiario(benefiarioId, "USER"));
+		if (ObjectUtils.isEmpty(documentos)) {
+			return new ResponseEntity<>(documentos, HttpStatus.NOT_FOUND);
+		}
 		return new ResponseEntity<>(documentos, HttpStatus.OK);
 	}
 

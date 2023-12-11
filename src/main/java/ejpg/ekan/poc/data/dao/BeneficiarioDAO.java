@@ -10,6 +10,9 @@ import ejpg.ekan.poc.data.domain.Beneficiario;
 import ejpg.ekan.poc.data.domain.Documento;
 import ejpg.ekan.poc.data.repositories.IBeneficiarioRepository;
 import ejpg.ekan.poc.data.repositories.IDocumentoRepository;
+
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,9 +60,33 @@ public class BeneficiarioDAO {
 		}
 	}
 
-	public List<Documento> listarTodosDocumentosDeBeneficiario(String beneficiarioId) {
+	public List<Documento> listarTodosDocumentosDeBeneficiario(String beneficiarioId, String role) {
 		try {
-			List<Documento> listDocumento = this.documentoRepository.findByBeneficiario(beneficiarioId);
+			List<Documento> listDocumento = null;
+			
+			Optional<Beneficiario> beneficiario = this.beneficiarioRepository.findById(beneficiarioId);
+			
+			if (beneficiario.isPresent()) {
+				
+				Beneficiario instancia = beneficiario.get();
+				
+				if(BooleanUtils.isTrue(instancia.getHidden())) {
+					
+					if (role.equals("ADMIN")) {
+						listDocumento = this.documentoRepository.findByBeneficiario(beneficiarioId);						
+					}
+					
+				}
+				
+				if (BooleanUtils.isFalse(instancia.getHidden())
+						|| ObjectUtils.isEmpty(instancia.getHidden())) {
+					listDocumento = this.documentoRepository.findByBeneficiario(beneficiarioId);
+				}
+				
+			} else {
+				throw new RuntimeException("Beneficiario não encontrado Id:" + beneficiarioId);
+			}
+			
 			return listDocumento;
 		} catch (RuntimeException e) {
 			throw new RuntimeException(e);
