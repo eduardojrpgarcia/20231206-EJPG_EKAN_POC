@@ -108,6 +108,11 @@ public class BeneficiarioDAO {
 			Optional<Beneficiario> b = this.beneficiarioRepository.findById(beneficiario.getId());
 			if (b.isPresent()) {
 				beneficiarioAtualizacao = b.get();
+				
+				if(BooleanUtils.isTrue(beneficiarioAtualizacao.getHidden())) {
+					throw new RuntimeException("Beneficiario não encontrado Id: " + beneficiarioAtualizacao.getId());
+				}
+				
 			} else {
 				throw new RuntimeException("Beneficiario nao encontrado Identificador: " + beneficiario.getId());
 			}
