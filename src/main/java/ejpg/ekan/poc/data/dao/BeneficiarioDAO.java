@@ -10,6 +10,7 @@ import ejpg.ekan.poc.data.domain.Beneficiario;
 import ejpg.ekan.poc.data.domain.Documento;
 import ejpg.ekan.poc.data.repositories.IBeneficiarioRepository;
 import ejpg.ekan.poc.data.repositories.IDocumentoRepository;
+import ejpg.ekan.poc.web.exception.RuntimeServiceException;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -22,7 +23,7 @@ public class BeneficiarioDAO {
     private IBeneficiarioRepository beneficiarioRepository;
 
 	private IDocumentoRepository documentoRepository;
-
+	
 	@Autowired
 	public BeneficiarioDAO(IBeneficiarioRepository beneficiarioRepository,
 						IDocumentoRepository documentoRepository) {
@@ -35,14 +36,14 @@ public class BeneficiarioDAO {
 		try {
 			b = this.beneficiarioRepository.save(beneficiario);
 		} catch (RuntimeException e) {
-			throw new RuntimeException(e);
+			throw new RuntimeServiceException(e);
 		} try {
 			for (Documento d : documentos) {
 				d.setBeneficiario(b);
 				this.documentoRepository.save(d);
 			}
 		} catch (RuntimeException e) {
-			throw new RuntimeException(e);
+			throw new RuntimeServiceException(e);
 		}
 	}
 
@@ -56,7 +57,7 @@ public class BeneficiarioDAO {
 			}
 			return listBeneficiarios;
 		} catch (RuntimeException e) {
-			throw new RuntimeException(e);
+			throw new RuntimeServiceException(e);
 		}
 	}
 
@@ -74,6 +75,8 @@ public class BeneficiarioDAO {
 					
 					if (role.equals("ADMIN")) {
 						listDocumento = this.documentoRepository.findByBeneficiario(beneficiarioId);						
+					} else {
+						throw new RuntimeException("USUARIO SEM PERMISSAO PARA BUSCA DE BENEFICIARIO ID: " + beneficiarioId);
 					}
 					
 				}
@@ -84,12 +87,12 @@ public class BeneficiarioDAO {
 				}
 				
 			} else {
-				throw new RuntimeException("Beneficiario nao encontrado Id:" + beneficiarioId);
+				throw new RuntimeServiceException("BENEFICIARIO NAO ENCONTRADO ID: " + beneficiarioId);
 			}
 			
 			return listDocumento;
 		} catch (RuntimeException e) {
-			throw new RuntimeException(e);
+			throw new RuntimeServiceException(e);
 		}
 	}
 	
@@ -98,11 +101,11 @@ public class BeneficiarioDAO {
 			Beneficiario beneficiarioAtualizacao;
 			
 			if (beneficiario.getId() == null) {
-				throw new RuntimeException("Identificador de beneficiario nao informado");
+				throw new RuntimeServiceException("IDENTIFICADOR DE BENEFICIARIO NAO INFORMADO");
 			}
 
 			if (beneficiario.getTelefone() == null) {
-				throw new RuntimeException("Nao foram informados dados permitidos para atualizacao");
+				throw new RuntimeServiceException("NAO FORAM INFORMADOS DADOS PERMITIDOS PARA ATUALIZACAO");
 			}
 			
 			Optional<Beneficiario> b = this.beneficiarioRepository.findById(beneficiario.getId());
@@ -110,11 +113,11 @@ public class BeneficiarioDAO {
 				beneficiarioAtualizacao = b.get();
 				
 				if(BooleanUtils.isTrue(beneficiarioAtualizacao.getHidden())) {
-					throw new RuntimeException("Beneficiario nao encontrado Id: " + beneficiarioAtualizacao.getId());
+					throw new RuntimeServiceException("SEM PERMISSAO PARA ATUALIZAR DADOS DE BENEFICIARIO ID: " + beneficiarioAtualizacao.getId());
 				}
 				
 			} else {
-				throw new RuntimeException("Beneficiario nao encontrado Identificador: " + beneficiario.getId());
+				throw new RuntimeServiceException("BENEFICIARIO NAO ENCONTRADO ID: " + beneficiario.getId());
 			}
 			
 			beneficiarioAtualizacao.setDataAtualizacao(LocalDateTime.now());
@@ -122,7 +125,7 @@ public class BeneficiarioDAO {
 			
 			this.beneficiarioRepository.save(beneficiarioAtualizacao);
 		} catch (RuntimeException e) {
-			throw new RuntimeException(e);
+			throw new RuntimeServiceException(e);
 		}
 	}
 	
@@ -133,12 +136,12 @@ public class BeneficiarioDAO {
 				Beneficiario instancia = b.get();
 				
 				if(BooleanUtils.isTrue(instancia.getHidden())) {
-					throw new RuntimeException("Beneficiario nao encontrado Id: " + instancia.getId());
+					throw new RuntimeServiceException("TENTATIVA DE REMOCAO DUPLICADA BENEFICIARIO ID: " + instancia.getId());
 				}
-			}			
+			}	
 			this.beneficiarioRepository.updateToHidden(true, beneficiarioId);
 		} catch (RuntimeException e) {
-			throw new RuntimeException(e);
+			throw new RuntimeServiceException(e);
 		}
 	}
 
