@@ -32,7 +32,7 @@ CARD 1
 
 
 CARD 2
-- adicionar autenficacao e autorizacao na api [ em andamento ]
+- adicionar autenficacao e autorizacao na api [ em andamento | congelado ]
 
 
 CARD 3
@@ -40,4 +40,9 @@ CARD 3
 - adicionar tratamento de resposta de api na camada de persistencia quando lançado excecoes [ ok ]
 - adicionar tratamento para impedir a remoção de beneficiario removido [ ok ]
 - adicionar tratamento de console para saida no padrão UTF-8 (logs de aplicação) [ ok ]
+
+
+CARD 4
+- adicionar tratamento para impedir criacao de beneficiario com id duplicado [ em andamento ]
+
 ---------------------------------------------------------------------------------------------------
