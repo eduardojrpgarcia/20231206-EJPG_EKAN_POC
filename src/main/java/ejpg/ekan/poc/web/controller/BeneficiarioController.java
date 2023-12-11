@@ -36,6 +36,11 @@ public class BeneficiarioController {
 	@GetMapping
 	public ResponseEntity<List<BeneficiarioDTO>> buscarTodosBeneficiarios() {
 		List<BeneficiarioDTO> beneficiarios = mapper.mapBeneficiarioToBeneficiarioDTO(dao.listarTodosBeneficiarios());
+		for (BeneficiarioDTO dto : beneficiarios) {
+			List<DocumentoDTO> documentos = 
+					mapper.mapDocumentoDTOFromDocumento(dao.listarTodosDocumentosDeBeneficiario(dto.getId()));
+			dto.setDocumentos(documentos);
+		}
 		return new ResponseEntity<>(beneficiarios, HttpStatus.OK);
 	}
 

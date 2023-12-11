@@ -27,8 +27,8 @@ implementado Mappers para a tradução de DTO para DAO (vise-versa).
 TO DO
 
 CARD 1
-- adicionar listagem de documentos em lista beneficiarios [ EM ANDAMENTO ]
-- ocultar documentos de beneficiarios removidos em lista de documentos
+- adicionar listagem de documentos em lista beneficiarios [ OK ]
+- ocultar documentos de beneficiarios removidos em lista de documentos [ EM ANDAMENTO ]
 
 
 CARD 2
