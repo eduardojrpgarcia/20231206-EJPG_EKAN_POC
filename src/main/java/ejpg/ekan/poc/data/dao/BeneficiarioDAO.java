@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import ejpg.ekan.poc.data.domain.Beneficiario;
 import ejpg.ekan.poc.data.domain.Documento;
@@ -14,11 +15,14 @@ import ejpg.ekan.poc.web.exception.RuntimeServiceException;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class BeneficiarioDAO {
+	
+	private static final Logger logger = Logger.getLogger(BeneficiarioDAO.class);
 	
     private IBeneficiarioRepository beneficiarioRepository;
 
@@ -32,7 +36,8 @@ public class BeneficiarioDAO {
 	}
 
 	public void salvarBeneficiario(Beneficiario beneficiario, List<Documento> documentos) {
-		Beneficiario b;
+		
+		Beneficiario novoBeneficiario;
 		
 		if (ObjectUtils.isNotEmpty(beneficiario.getId())) {
 			
@@ -54,14 +59,68 @@ public class BeneficiarioDAO {
 		}
 		
 		try {
-			b = this.beneficiarioRepository.save(beneficiario);
+			
+			novoBeneficiario = this.beneficiarioRepository.save(beneficiario);
+		
 		} catch (RuntimeException e) {
 			throw new RuntimeServiceException(e);
-		} try {
-			for (Documento d : documentos) {
-				d.setBeneficiario(b);
-				this.documentoRepository.save(d);
+		}
+		
+		Boolean documentoRepetido = false;
+		
+		try {
+			
+			for (Documento documento : documentos) {
+				
+				documento.setBeneficiario(novoBeneficiario);
+				
+				List<Documento> documentoEncontrado = this.documentoRepository.findByDescricao(documento.getDescricao());
+				
+				if (ObjectUtils.isNotEmpty(documentoEncontrado)){
+					
+					final String ticket = UUID.randomUUID().toString();
+					
+					logger.warn("TICKET: [" + ticket + "] DOCUMENTO DUPLICADO EM NOVO BENEFICIARIO ID: " + novoBeneficiario.getId());
+
+					
+					for (Documento i : documentoEncontrado) {
+					
+						logger.warn("TICKET: [" + ticket + "] DOCUMENTO DUPLICADO ID: " + i.getId());
+						
+						Optional<Beneficiario> beneficiarioPreExtistente = this.beneficiarioRepository.findById(i.getBeneficiario().getId());
+						
+						if (beneficiarioPreExtistente.isPresent()) {
+							
+							logger.warn("TICKET: [" + ticket + "] PRE EXISTENTE BENEFICIARIO ID: " + beneficiarioPreExtistente.get().getId());
+							
+							if (BooleanUtils.isTrue(beneficiarioPreExtistente.get().getHidden())) {
+								
+								logger.warn("TICKET: [" + ticket + "] PRE EXISTENTE BENEFICIARIO ID: " + beneficiarioPreExtistente.get().getId()
+										+ "ESTA COM STATUS DE DESABILITADO");			
+								
+							}
+							
+						}
+						
+						documentoRepetido = Boolean.TRUE;
+					}
+					
+					Documento novoDocumento = this.documentoRepository.save(documento);
+					
+					logger.warn("TICKET: [" + ticket + "] NOVO DOCUMENTO ID : " + novoDocumento.getId());
+					
+					this.removerBeneficiario(novoBeneficiario.getId());
+					
+					logger.warn("TICKET: [" + ticket + "] NOVO BENEFIARIO ID: " + novoBeneficiario.getId() + " FOI DESABILITADO");
+				}
+				
+				this.documentoRepository.save(documento);				
 			}
+			
+			if (BooleanUtils.isTrue(documentoRepetido)) {
+				throw new RuntimeServiceException();
+			}
+			
 		} catch (RuntimeException e) {
 			throw new RuntimeServiceException(e);
 		}

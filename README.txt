@@ -44,5 +44,6 @@ CARD 3
 
 CARD 4
 - adicionar tratamento para impedir criacao de beneficiario com id duplicado [ ok ]
+- adicionar tratamento para impedir criacao de beneficiario com documento duplicado [ ok ]
 
 ---------------------------------------------------------------------------------------------------

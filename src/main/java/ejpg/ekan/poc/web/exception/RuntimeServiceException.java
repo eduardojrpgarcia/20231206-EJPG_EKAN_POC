@@ -12,4 +12,8 @@ public class RuntimeServiceException extends RuntimeException {
 		super(message);
 	}
 	
+	public RuntimeServiceException() {
+		super();
+	}
+	
 }
