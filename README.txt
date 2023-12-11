@@ -32,5 +32,10 @@ CARD 1
 
 
 CARD 2
-- adicionar autenficacao e autorizacao na api [ em andamento ]
+- adicionar autenficacao e autorizacao na api [ em andamento | congelado ]
+
+
+CARD 3
+- adicionar tratamento para impedir atualizacao de beneficiario removido [ em andamento ]
+- adicionar tratamento de resposta de api na camada de persistencia quando lançado excecoes [ na lista ]
 ---------------------------------------------------------------------------------------------------
