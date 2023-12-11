@@ -128,6 +128,14 @@ public class BeneficiarioDAO {
 	
 	public void removerBeneficiario(String beneficiarioId) {
 		try {
+			Optional<Beneficiario> b = this.beneficiarioRepository.findById(beneficiarioId);
+			if (b.isPresent()) {
+				Beneficiario instancia = b.get();
+				
+				if(BooleanUtils.isTrue(instancia.getHidden())) {
+					throw new RuntimeException("Beneficiario não encontrado Id: " + instancia.getId());
+				}
+			}			
 			this.beneficiarioRepository.updateToHidden(true, beneficiarioId);
 		} catch (RuntimeException e) {
 			throw new RuntimeException(e);
