@@ -33,6 +33,26 @@ public class BeneficiarioDAO {
 
 	public void salvarBeneficiario(Beneficiario beneficiario, List<Documento> documentos) {
 		Beneficiario b;
+		
+		if (ObjectUtils.isNotEmpty(beneficiario.getId())) {
+			
+			Optional<Beneficiario> optBeneficiario = this.beneficiarioRepository.findById(beneficiario.getId());
+			
+			if (optBeneficiario.isPresent()) {
+				
+				Beneficiario instancia = optBeneficiario.get();
+				
+				if (BooleanUtils.isTrue(instancia.getHidden())) {
+					throw new RuntimeServiceException("TENTATIVA DE RECADASTRAMENTO DE BENEFICIARIO ID: " + instancia.getId());
+				}
+			}
+			
+		}
+		
+		if(ObjectUtils.isNotEmpty(beneficiario.getId())) {
+			throw new RuntimeServiceException("TENTANTIVA DE CADASTRAMENTO DE BENEFICIARIO COM ID PREDEFINIDO: " + beneficiario.getId());
+		}
+		
 		try {
 			b = this.beneficiarioRepository.save(beneficiario);
 		} catch (RuntimeException e) {

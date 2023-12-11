@@ -32,7 +32,7 @@ CARD 1
 
 
 CARD 2
-- adicionar autenficacao e autorizacao na api [ em andamento | congelado ]
+- adicionar autenficacao e autorizacao na api [ em andamento ]
 
 
 CARD 3
@@ -43,6 +43,6 @@ CARD 3
 
 
 CARD 4
-- adicionar tratamento para impedir criacao de beneficiario com id duplicado [ em andamento ]
+- adicionar tratamento para impedir criacao de beneficiario com id duplicado [ ok ]
 
 ---------------------------------------------------------------------------------------------------
