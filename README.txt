@@ -23,3 +23,14 @@ Inicialmente, modelado as entidades de persistencia, criado Repositories e DAO
 para as funcoes de banco de dados, criado DTO de para exposicao da API,
 implementado Mappers para a tradução de DTO para DAO (vise-versa).
 ---------------------------------------------------------------------------------------------------
+
+TO DO
+
+CARD 1
+- adicionar listagem de documentos em lista beneficiarios [ EM ANDAMENTO ]
+- ocultar documentos de beneficiarios removidos em lista de documentos
+
+
+CARD 2
+- adicionar autenficacao e autorizacao na api
+---------------------------------------------------------------------------------------------------
