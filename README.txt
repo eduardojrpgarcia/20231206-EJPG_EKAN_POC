@@ -37,7 +37,7 @@ CARD 2
 
 CARD 3
 - adicionar tratamento para impedir atualizacao de beneficiario removido [ ok ]
-- adicionar tratamento de resposta de api na camada de persistencia quando lançado excecoes [ na lista ]
+- adicionar tratamento de resposta de api na camada de persistencia quando lançado excecoes [ em andamento ]
 - adicionar tratamento para impedir a remoção de beneficiario removido [ ok ]
-- adicionar tratamento de console para saida no padrão UTF-8 (logs de aplicação) [ em andamento ]
+- adicionar tratamento de console para saida no padrão UTF-8 (logs de aplicação) [ ok ]
 ---------------------------------------------------------------------------------------------------

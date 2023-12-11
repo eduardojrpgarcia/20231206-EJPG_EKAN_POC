@@ -84,7 +84,7 @@ public class BeneficiarioDAO {
 				}
 				
 			} else {
-				throw new RuntimeException("Beneficiario não encontrado Id:" + beneficiarioId);
+				throw new RuntimeException("Beneficiario nao encontrado Id:" + beneficiarioId);
 			}
 			
 			return listDocumento;
@@ -98,11 +98,11 @@ public class BeneficiarioDAO {
 			Beneficiario beneficiarioAtualizacao;
 			
 			if (beneficiario.getId() == null) {
-				throw new RuntimeException("Identificador de beneficiario não informado");
+				throw new RuntimeException("Identificador de beneficiario nao informado");
 			}
 
 			if (beneficiario.getTelefone() == null) {
-				throw new RuntimeException("Não foram informados dados permitidos para atualizacao");
+				throw new RuntimeException("Nao foram informados dados permitidos para atualizacao");
 			}
 			
 			Optional<Beneficiario> b = this.beneficiarioRepository.findById(beneficiario.getId());
@@ -110,7 +110,7 @@ public class BeneficiarioDAO {
 				beneficiarioAtualizacao = b.get();
 				
 				if(BooleanUtils.isTrue(beneficiarioAtualizacao.getHidden())) {
-					throw new RuntimeException("Beneficiario não encontrado Id: " + beneficiarioAtualizacao.getId());
+					throw new RuntimeException("Beneficiario nao encontrado Id: " + beneficiarioAtualizacao.getId());
 				}
 				
 			} else {
@@ -133,7 +133,7 @@ public class BeneficiarioDAO {
 				Beneficiario instancia = b.get();
 				
 				if(BooleanUtils.isTrue(instancia.getHidden())) {
-					throw new RuntimeException("Beneficiario não encontrado Id: " + instancia.getId());
+					throw new RuntimeException("Beneficiario nao encontrado Id: " + instancia.getId());
 				}
 			}			
 			this.beneficiarioRepository.updateToHidden(true, beneficiarioId);
