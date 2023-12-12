@@ -35,7 +35,7 @@ public final class GlobalControllerExceptionHandler {
 		String pathURL = r.getRequestURL().toString();
 		String error = e.getLocalizedMessage();
 		logger.warn(pathURL + " : " + error);
-		return new ErrorInfo().setErrorCode(500).setErrorMessage("Ops!");
+		return null;
 	}
 	
 }

@@ -5,21 +5,29 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import ejpg.ekan.poc.data.domain.Beneficiario;
 import ejpg.ekan.poc.data.domain.Documento;
 import ejpg.ekan.poc.data.repositories.IBeneficiarioRepository;
 import ejpg.ekan.poc.data.repositories.IDocumentoRepository;
+import ejpg.ekan.poc.web.exception.RuntimeServiceException;
+
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class BeneficiarioDAO {
 	
+	private static final Logger logger = Logger.getLogger(BeneficiarioDAO.class);
+	
     private IBeneficiarioRepository beneficiarioRepository;
 
 	private IDocumentoRepository documentoRepository;
-
+	
 	@Autowired
 	public BeneficiarioDAO(IBeneficiarioRepository beneficiarioRepository,
 						IDocumentoRepository documentoRepository) {
@@ -28,18 +36,115 @@ public class BeneficiarioDAO {
 	}
 
 	public void salvarBeneficiario(Beneficiario beneficiario, List<Documento> documentos) {
-		Beneficiario b;
-		try {
-			b = this.beneficiarioRepository.save(beneficiario);
-		} catch (RuntimeException e) {
-			throw new RuntimeException(e);
-		} try {
-			for (Documento d : documentos) {
-				d.setBeneficiario(b);
-				this.documentoRepository.save(d);
+		
+		Beneficiario novoBeneficiario;
+		
+		if (ObjectUtils.isNotEmpty(beneficiario.getId())) {
+			
+			Optional<Beneficiario> optBeneficiario = this.beneficiarioRepository.findById(beneficiario.getId());
+			
+			if (optBeneficiario.isPresent()) {
+				
+				Beneficiario instancia = optBeneficiario.get();
+				
+				if (BooleanUtils.isTrue(instancia.getHidden())) {
+					throw new RuntimeServiceException("TENTATIVA DE RECADASTRAMENTO DE BENEFICIARIO ID: " + instancia.getId());
+				}
 			}
+			
+		}
+		
+		if(ObjectUtils.isNotEmpty(beneficiario.getId())) {
+			throw new RuntimeServiceException("TENTANTIVA DE CADASTRAMENTO DE BENEFICIARIO COM ID PREDEFINIDO: " + beneficiario.getId());
+		}
+		
+		try {
+			
+			if (ObjectUtils.isNotEmpty(beneficiario.getDataInclusao())) {
+				logger.warn("TENTATIVA DE CADASTRAMENTO DE BENEFICIARIO COM DE DATA E HORA DE INCLUSAO PRE DEFINIDO");
+			}
+			
+			if (ObjectUtils.isNotEmpty(beneficiario.getDataAtualizacao())) {
+				logger.warn("TENTATIVA DE CADASTRAMENTO DE BENEFIARIO COM DATA E HORA DE ATUALIZACAO PRE DEFINIDO");
+			}
+			
+			beneficiario.setDataInclusao(LocalDateTime.now());
+			beneficiario.setDataAtualizacao(LocalDateTime.now());
+			
+			novoBeneficiario = this.beneficiarioRepository.save(beneficiario);
+		
 		} catch (RuntimeException e) {
-			throw new RuntimeException(e);
+			throw new RuntimeServiceException(e);
+		}
+		
+		Boolean documentoRepetido = false;
+		
+		try {
+			
+			for (Documento documento : documentos) {
+				
+				documento.setBeneficiario(novoBeneficiario);
+				
+				List<Documento> documentoEncontrado = this.documentoRepository.findByDescricao(documento.getDescricao());
+				
+				if (ObjectUtils.isNotEmpty(documentoEncontrado)){
+					
+					final String ticket = UUID.randomUUID().toString();
+					
+					logger.warn("TICKET: [" + ticket + "] DOCUMENTO DUPLICADO EM NOVO BENEFICIARIO ID: " + novoBeneficiario.getId());
+
+					
+					for (Documento i : documentoEncontrado) {
+					
+						logger.warn("TICKET: [" + ticket + "] DOCUMENTO DUPLICADO ID: " + i.getId());
+						
+						Optional<Beneficiario> beneficiarioPreExtistente = this.beneficiarioRepository.findById(i.getBeneficiario().getId());
+						
+						if (beneficiarioPreExtistente.isPresent()) {
+							
+							logger.warn("TICKET: [" + ticket + "] PRE EXISTENTE BENEFICIARIO ID: " + beneficiarioPreExtistente.get().getId());
+							
+							if (BooleanUtils.isTrue(beneficiarioPreExtistente.get().getHidden())) {
+								
+								logger.warn("TICKET: [" + ticket + "] PRE EXISTENTE BENEFICIARIO ID: " + beneficiarioPreExtistente.get().getId()
+										+ "ESTA COM STATUS DE DESABILITADO");			
+								
+							}
+							
+						}
+						
+						documentoRepetido = Boolean.TRUE;
+					}
+					
+					Documento novoDocumento = this.documentoRepository.save(documento);
+					
+					logger.warn("TICKET: [" + ticket + "] NOVO DOCUMENTO ID : " + novoDocumento.getId());
+					
+					this.removerBeneficiario(novoBeneficiario.getId());
+					
+					logger.warn("TICKET: [" + ticket + "] NOVO BENEFIARIO ID: " + novoBeneficiario.getId() + " FOI DESABILITADO");
+				}
+				
+				if (ObjectUtils.isNotEmpty(documento.getDataInclusao())) {
+					logger.warn("TENTATIVA DE CADASTRAMENTO DE DOCUMENTO COM DE DATA E HORA DE INCLUSAO PRE DEFINIDO");
+				}
+				
+				if (ObjectUtils.isNotEmpty(documento.getDataAtualizacao())) {
+					logger.warn("TENTATIVA DE CADASTRAMENTO DE DOCUMENTO COM DATA E HORA DE ATUALIZACAO PRE DEFINIDO");
+				}
+				
+				documento.setDataInclusao(LocalDateTime.now());
+				documento.setDataAtualizacao(LocalDateTime.now());
+				
+				this.documentoRepository.save(documento);				
+			}
+			
+			if (BooleanUtils.isTrue(documentoRepetido)) {
+				throw new RuntimeServiceException();
+			}
+			
+		} catch (RuntimeException e) {
+			throw new RuntimeServiceException(e);
 		}
 	}
 
@@ -53,16 +158,42 @@ public class BeneficiarioDAO {
 			}
 			return listBeneficiarios;
 		} catch (RuntimeException e) {
-			throw new RuntimeException(e);
+			throw new RuntimeServiceException(e);
 		}
 	}
 
-	public List<Documento> listarTodosDocumentosDeBeneficiario(String beneficiarioId) {
+	public List<Documento> listarTodosDocumentosDeBeneficiario(String beneficiarioId, String role) {
 		try {
-			List<Documento> listDocumento = this.documentoRepository.findByBeneficiario(beneficiarioId);
+			List<Documento> listDocumento = null;
+			
+			Optional<Beneficiario> beneficiario = this.beneficiarioRepository.findById(beneficiarioId);
+			
+			if (beneficiario.isPresent()) {
+				
+				Beneficiario instancia = beneficiario.get();
+				
+				if(BooleanUtils.isTrue(instancia.getHidden())) {
+					
+					if (role.equals("ADMIN")) {
+						listDocumento = this.documentoRepository.findByBeneficiario(beneficiarioId);						
+					} else {
+						throw new RuntimeException("USUARIO SEM PERMISSAO PARA BUSCA DE BENEFICIARIO ID: " + beneficiarioId);
+					}
+					
+				}
+				
+				if (BooleanUtils.isFalse(instancia.getHidden())
+						|| ObjectUtils.isEmpty(instancia.getHidden())) {
+					listDocumento = this.documentoRepository.findByBeneficiario(beneficiarioId);
+				}
+				
+			} else {
+				throw new RuntimeServiceException("BENEFICIARIO NAO ENCONTRADO ID: " + beneficiarioId);
+			}
+			
 			return listDocumento;
 		} catch (RuntimeException e) {
-			throw new RuntimeException(e);
+			throw new RuntimeServiceException(e);
 		}
 	}
 	
@@ -71,18 +202,23 @@ public class BeneficiarioDAO {
 			Beneficiario beneficiarioAtualizacao;
 			
 			if (beneficiario.getId() == null) {
-				throw new RuntimeException("Identificador de beneficiario não informado");
+				throw new RuntimeServiceException("IDENTIFICADOR DE BENEFICIARIO NAO INFORMADO");
 			}
 
 			if (beneficiario.getTelefone() == null) {
-				throw new RuntimeException("Não foram informados dados permitidos para atualizacao");
+				throw new RuntimeServiceException("NAO FORAM INFORMADOS DADOS PERMITIDOS PARA ATUALIZACAO");
 			}
 			
 			Optional<Beneficiario> b = this.beneficiarioRepository.findById(beneficiario.getId());
 			if (b.isPresent()) {
 				beneficiarioAtualizacao = b.get();
+				
+				if(BooleanUtils.isTrue(beneficiarioAtualizacao.getHidden())) {
+					throw new RuntimeServiceException("SEM PERMISSAO PARA ATUALIZAR DADOS DE BENEFICIARIO ID: " + beneficiarioAtualizacao.getId());
+				}
+				
 			} else {
-				throw new RuntimeException("Beneficiario nao encontrado Identificador: " + beneficiario.getId());
+				throw new RuntimeServiceException("BENEFICIARIO NAO ENCONTRADO ID: " + beneficiario.getId());
 			}
 			
 			beneficiarioAtualizacao.setDataAtualizacao(LocalDateTime.now());
@@ -90,15 +226,23 @@ public class BeneficiarioDAO {
 			
 			this.beneficiarioRepository.save(beneficiarioAtualizacao);
 		} catch (RuntimeException e) {
-			throw new RuntimeException(e);
+			throw new RuntimeServiceException(e);
 		}
 	}
 	
 	public void removerBeneficiario(String beneficiarioId) {
 		try {
+			Optional<Beneficiario> b = this.beneficiarioRepository.findById(beneficiarioId);
+			if (b.isPresent()) {
+				Beneficiario instancia = b.get();
+				
+				if(BooleanUtils.isTrue(instancia.getHidden())) {
+					throw new RuntimeServiceException("TENTATIVA DE REMOCAO DUPLICADA BENEFICIARIO ID: " + instancia.getId());
+				}
+			}	
 			this.beneficiarioRepository.updateToHidden(true, beneficiarioId);
 		} catch (RuntimeException e) {
-			throw new RuntimeException(e);
+			throw new RuntimeServiceException(e);
 		}
 	}
 

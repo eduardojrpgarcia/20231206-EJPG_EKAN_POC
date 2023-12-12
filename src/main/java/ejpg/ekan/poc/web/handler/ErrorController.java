@@ -15,7 +15,7 @@ public class ErrorController {
 	@GetMapping
 	public ResponseEntity<ErrorInfo> error(HttpServletResponse s) {
 		HttpStatus http = HttpStatus.valueOf(s.getStatus());
-		ErrorInfo info = new ErrorInfo().setErrorCode(http.value()).setErrorMessage(http.getReasonPhrase());
+		ErrorInfo info = new ErrorInfo().setCode(http.value()).setMessage(http.getReasonPhrase());
 		return new ResponseEntity<>(info, http);
 	}
 	
