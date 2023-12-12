@@ -46,4 +46,8 @@ CARD 4
 - adicionar tratamento para impedir criacao de beneficiario com id duplicado [ ok ]
 - adicionar tratamento para impedir criacao de beneficiario com documento duplicado [ ok ]
 
+
+CARD 5
+- adicionar tratamento de inclusao e atualizacao de data e hora na inclusao de beneficiario [ ok ]
+- adicionar tratamento de inclusao e atualizacao de data e hora na inclusao de documentos [ ok ]
 ---------------------------------------------------------------------------------------------------

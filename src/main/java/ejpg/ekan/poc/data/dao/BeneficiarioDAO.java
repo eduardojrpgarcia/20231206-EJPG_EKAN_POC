@@ -60,6 +60,17 @@ public class BeneficiarioDAO {
 		
 		try {
 			
+			if (ObjectUtils.isNotEmpty(beneficiario.getDataInclusao())) {
+				logger.warn("TENTATIVA DE CADASTRAMENTO DE BENEFICIARIO COM DE DATA E HORA DE INCLUSAO PRE DEFINIDO");
+			}
+			
+			if (ObjectUtils.isNotEmpty(beneficiario.getDataAtualizacao())) {
+				logger.warn("TENTATIVA DE CADASTRAMENTO DE BENEFIARIO COM DATA E HORA DE ATUALIZACAO PRE DEFINIDO");
+			}
+			
+			beneficiario.setDataInclusao(LocalDateTime.now());
+			beneficiario.setDataAtualizacao(LocalDateTime.now());
+			
 			novoBeneficiario = this.beneficiarioRepository.save(beneficiario);
 		
 		} catch (RuntimeException e) {
@@ -113,6 +124,17 @@ public class BeneficiarioDAO {
 					
 					logger.warn("TICKET: [" + ticket + "] NOVO BENEFIARIO ID: " + novoBeneficiario.getId() + " FOI DESABILITADO");
 				}
+				
+				if (ObjectUtils.isNotEmpty(documento.getDataInclusao())) {
+					logger.warn("TENTATIVA DE CADASTRAMENTO DE DOCUMENTO COM DE DATA E HORA DE INCLUSAO PRE DEFINIDO");
+				}
+				
+				if (ObjectUtils.isNotEmpty(documento.getDataAtualizacao())) {
+					logger.warn("TENTATIVA DE CADASTRAMENTO DE DOCUMENTO COM DATA E HORA DE ATUALIZACAO PRE DEFINIDO");
+				}
+				
+				documento.setDataInclusao(LocalDateTime.now());
+				documento.setDataAtualizacao(LocalDateTime.now());
 				
 				this.documentoRepository.save(documento);				
 			}
