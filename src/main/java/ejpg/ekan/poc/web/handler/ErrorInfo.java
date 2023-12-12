@@ -4,27 +4,27 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ErrorInfo {
 	
-	@JsonProperty("error_code")
-	private Integer errorCode;
+	@JsonProperty("code")
+	private Integer code;
 	
-	@JsonProperty("error_message")
-	private String errorMessage;
+	@JsonProperty("message")
+	private String message;
 
-	public Integer getErrorCode() {
-		return errorCode;
+	public Integer getCode() {
+		return code;
 	}
 	
-	public ErrorInfo setErrorCode(Integer errorCode) {
-		this.errorCode = errorCode;
+	public ErrorInfo setCode(Integer code) {
+		this.code = code;
 		return this;
 	}
 	
-	public String getErrorMessage() {
-		return errorMessage;
+	public String getMessage() {
+		return message;
 	}
 
-	public ErrorInfo setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
+	public ErrorInfo setMessage(String errorMessage) {
+		this.message = errorMessage;
 		return this;
 	}
 

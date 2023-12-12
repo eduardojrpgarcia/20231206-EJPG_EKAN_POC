@@ -16,4 +16,6 @@ public interface IDocumentoRepository extends CrudRepository<Documento, String> 
     )
     List<Documento> findByBeneficiario(String beneficiarioId);
 
+	List<Documento> findByDescricao(String descricao);
+
 }
